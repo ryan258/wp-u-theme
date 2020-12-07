@@ -17,11 +17,11 @@
     <div class="site-header__menu group">
       <nav class="main-navigation">
         <ul>
-          <li><a href="<?php echo site_url('/about-us') ?>">About Us</a></li>
-          <li><a href="#">Programs</a></li>
-          <li><a href="#">Events</a></li>
-          <li><a href="#">Campuses</a></li>
-          <li><a href="#">Blog</a></li>
+          <li <?php if (is_page('about-us') or wp_get_post_parent_id(0) == 11) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/about-us') ?>">About Us</a></li>
+          <li <?php if (is_page('programs')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/programs') ?>">Programs</a></li>
+          <li <?php if (is_page('events')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/events') ?>">Events</a></li>
+          <li <?php if (is_page('campuses')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/campuses') ?>">Campuses</a></li>
+          <li <?php if (is_page('blog')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/blog') ?>">Blog</a></li>
         </ul>
       </nav>
       <div class="site-header__util">
