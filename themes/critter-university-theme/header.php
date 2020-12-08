@@ -21,7 +21,7 @@
           <li <?php if (is_page('programs')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/programs') ?>">Programs</a></li>
           <li <?php if (is_page('events')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/events') ?>">Events</a></li>
           <li <?php if (is_page('campuses')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/campuses') ?>">Campuses</a></li>
-          <li <?php if (is_page('blog')) echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/blog') ?>">Blog</a></li>
+          <li <?php if (get_post_type() == 'post') echo 'class="current-menu-item"' ?>><a href="<?php echo site_url('/blog') ?>">Blog</a></li>
         </ul>
       </nav>
       <div class="site-header__util">
