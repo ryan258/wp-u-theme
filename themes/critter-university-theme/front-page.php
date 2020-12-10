@@ -16,10 +16,22 @@
       <h2 class="headline headline--small-plus t-center">Upcoming Events</h2>
 
       <?php
+        $today = date('Ymd');
         // define the view
         $homepageEvents = new WP_Query(array(
-          'posts_per_page' => 3,
+          'posts_per_page' => -1,
           'post_type' => 'event',
+          'meta_key' => 'event_date',
+          'orderby' => 'meta_value_num',
+          'order' => 'ASC',
+          'meta_query' => array(
+            array(
+              'key' => 'event_date',
+              'compare' => '>=',
+              'value' => $today,
+              'type' => 'numeric'
+            ),
+          ),
         ));
 
         while ($homepageEvents->have_posts()) {
