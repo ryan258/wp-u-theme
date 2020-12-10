@@ -19,7 +19,7 @@
         $today = date('Ymd');
         // define the view
         $homepageEvents = new WP_Query(array(
-          'posts_per_page' => -1,
+          'posts_per_page' => 3,
           'post_type' => 'event',
           'meta_key' => 'event_date',
           'orderby' => 'meta_value_num',

@@ -18,12 +18,33 @@ function university_files() {
 // Load our CSS & JS files
 add_action('wp_enqueue_scripts', 'university_files');
 
+
+// Implement dynamic page titles
 function university_features() {
-  
-  
   // add a feature to the theme (which feature)
   add_theme_support('title-tag');
 }
 
-// Implement dynamic page titles
 add_action('after_setup_theme', 'university_features');
+
+// alter the query 
+function university_adjust_queries($query) {
+  // alter the query for the events archive
+  if (!is_admin() AND is_post_type_archive('event') AND $query->is_main_query()) {
+    $today = date('Ymd');
+    $query->set('meta_key', 'event_date');
+    $query->set('orderby', 'meta_value_num');
+    $query->set('order', 'ASC');
+    $query->set('meta_query', array(
+      array(
+        'key' => 'event_date',
+        'compare' => '>=',
+        'value' => $today,
+        'type' => 'numeric'
+      ),
+    ));
+  }
+}
+
+// (pre_get_posts) right before WP sends it's query to the DB
+add_action('pre_get_posts', 'university_adjust_queries');
