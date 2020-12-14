@@ -1,18 +1,13 @@
 <?php
   get_header();
   while(have_posts()) {
-    the_post(); ?>    
-    
-    <div class="page-banner">
-      <div class="page-banner__bg-image" style="background-image: url(<?php echo get_theme_file_uri('/images/ocean.jpg'); ?>);"></div>
-      <div class="page-banner__content container container--narrow">
-        <!-- Get page title -->
-        <h1 class="page-banner__title"><?php the_title(); ?></h1>
-        <div class="page-banner__intro">
-          <p>TODO: Make this subtitle dynamic!</p>
-        </div>
-      </div>  
-    </div>
+    the_post(); 
+    pageBanner(array(
+      // 'title' => 'I am the titliest title!',
+      // 'subtitle' => 'Hi, this is the subtitle.',
+      // 'photo' => 'https://image.shutterstock.com/z/stock-vector-rick-and-morty-cartoon-portal-gun-background-abstract-green-and-yellow-colors-vortex-vector-1552796555.jpg'
+    ));
+?>    
 
     <div class="container container--narrow page-section">
 
