@@ -16,10 +16,12 @@ pageBanner(array(
       the_post(); 
       $mapLocation = get_field('map_location')
       ?>
-      <div class="marker" data-lat="<?php echo $mapLocation['lat']; ?>" data-lng="<?php echo $mapLocation['lng']; ?>"></div>
-    <?php } wp_reset_postdata(); // runs clean for our queries
-    echo paginate_links();
-  ?>
+      <div class="marker" data-lat="<?php echo $mapLocation['lat']; ?>" data-lng="<?php echo $mapLocation['lng']; ?>">
+        <!-- map icon - content bubble info -->
+        <h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
+        <?php echo $mapLocation['address']; ?>
+      </div>
+    <?php } ?>
   </div>
 </div>
 
