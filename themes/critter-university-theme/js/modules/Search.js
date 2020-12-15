@@ -44,8 +44,11 @@ class Search {
   }
 
   getResults(e) {
-    this.resultsDiv.html("imagine content")
-    this.isSpinnerVisible = false
+    // this.resultsDiv.html("imagine content")
+    // this.isSpinnerVisible = false
+    $.getJSON("./wp-json/wp/v2/posts?search=" + this.searchField.val(), function (posts) {
+      alert(posts[0].title.rendered)
+    })
   }
 
   keyPressDispatcher(e) {
