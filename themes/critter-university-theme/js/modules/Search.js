@@ -45,18 +45,25 @@ class Search {
   }
 
   getResults(e) {
-    // this.resultsDiv.html("imagine content")
-    // this.isSpinnerVisible = false
-    $.getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val(), posts => {
-      // alert(posts[0].title.rendered)
-      this.resultsDiv.html(`
-        <h2 class="search-overlay__section-title">General Information</h2>
-        ${posts.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
-          ${posts.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
-        ${posts.length ? "</ul>" : ""}
+    $.when(
+      // no need for callback in getJSON w/ when/then methods
+      $.getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val()),
+      $.getJSON(universityData.root_url + "/wp-json/wp/v2/pages?search=" + this.searchField.val())
+    ).then(
+      (posts, pages) => {
+        let combinedResults = posts[0].concat(pages[0])
+        this.resultsDiv.html(`
+      <h2 class="search-overlay__section-title">General Information</h2>
+        ${combinedResults.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
+          ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
+        ${combinedResults.length ? "</ul>" : ""}
       `)
-      this.isSpinnerVisible = false
-    })
+        this.isSpinnerVisible = false
+      },
+      () => {
+        this.resultsDiv.html("<p>Unexpected error 👻; please try again 👍</p>")
+      }
+    )
   }
 
   keyPressDispatcher(e) {
