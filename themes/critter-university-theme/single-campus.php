@@ -55,43 +55,7 @@
           echo '</ul>';
         }
 
-
         wp_reset_postdata();
-
-      $today = date('Ymd');
-        // define the view
-        $homepageEvents = new WP_Query(array(
-          'posts_per_page' => 3,
-          'post_type' => 'event',
-          'meta_key' => 'event_date',
-          'orderby' => 'meta_value_num',
-          'order' => 'ASC',
-          'meta_query' => array(
-            array(
-              'key' => 'event_date',
-              'compare' => '>=',
-              'value' => $today,
-              'type' => 'numeric'
-            ),
-            array(
-              'key' => 'related_programs',
-              'compare' => 'LIKE', // LIKE ~= contains
-              'value' => '"' . get_the_ID() . '"'// in quotes becaue WO serializes values with quotes
-            )
-          ),
-        ));
-
-        if ($homepageEvents->have_posts()) {
-          echo '<hr class="section-break" />';
-          echo '<h2 class="headline headline--medium">Upcoming ' . get_the_title() . ' Events</h2>';
-
-          while ($homepageEvents->have_posts()) {
-            // get data ready for each post
-            $homepageEvents->the_post();
-            // use the file template-parts/content-event.php
-            get_template_part('template-parts/content', 'event');
-          }
-        }
       ?>
     </div>
     

@@ -66,6 +66,10 @@ add_action('after_setup_theme', 'university_features');
 // alter the query 
 function university_adjust_queries($query) {
   // alter the query for the program archive
+  if (!is_admin() AND is_post_type_archive('campus') AND $query->is_main_query()) {
+    $query->set('posts_per_page', -1);
+  }
+  // alter the query for the program archive
   if (!is_admin() AND is_post_type_archive('program') AND $query->is_main_query()) {
     $query->set('orderby', 'title');
     $query->set('order', 'ASC');
