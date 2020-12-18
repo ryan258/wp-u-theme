@@ -1,5 +1,20 @@
 <?php
 
+
+function university_custom_rest() {
+  // register_rest_field(postTypeToCustomize, nameNewField, arrayOfHowToManageThisField)
+  // whatever callback fn returns will used as the value in nameNewField
+  register_rest_field('post', 'authorName', array(
+    'get_callback' => function() {
+      return get_the_author();
+    }
+  ));
+  // you can register as many new rest fields as you want here
+  // register_rest_field('', '', array());
+}
+// add_action(eventNameToHookOnTo, functionToRunAsResponseToEvent)
+add_action('rest_api_init', 'university_custom_rest');
+
 function pageBanner($args = NULL) {
   if (!$args['title']) {
     $args['title'] = get_the_title();
