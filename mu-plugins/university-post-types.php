@@ -60,7 +60,7 @@ function university_post_types() {
   
   // Professor Post Type
   register_post_type('professor', array(
-    'show_in_rest' => true,
+    'show_in_rest' => true, // make available for our custom REST route
     'supports' => array('title', 'editor', 'thumbnail'),
     'public' => true,
     'labels' => array(
