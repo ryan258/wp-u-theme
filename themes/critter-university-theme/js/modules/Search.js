@@ -1,10 +1,10 @@
 import $ from "jQuery"
 
 class Search {
-  // 1.) describe objectevery class needs a constructor! 🤗
+  // 1.) describe object - every class needs a constructor! 🤗
   constructor() {
     // what executes whenever you instantiate an object
-    this.addSearchHTML()
+    this.addSearchHTML() // put elements into existance first
     this.resultsDiv = $("#search-overlay__results")
     this.openButton = $(".js-search-trigger")
     this.closeButton = $(".search-overlay__close")
@@ -18,7 +18,7 @@ class Search {
     this.previousValue
     this.typingTimer
   }
-  // 2.) describe events - connect the dots
+  // 2.) describe events - connect the dots - bind those class methods 👻
   events() {
     this.openButton.on("click", this.openOverlay.bind(this))
     this.closeButton.on("click", this.closeOverlay.bind(this))
@@ -28,6 +28,7 @@ class Search {
 
   // 3.) methods - our stock of actions
   typingLogic() {
+    // if there is a change in the value of the search, reset timer & run again
     if (this.searchField.val() != this.previousValue) {
       clearTimeout(this.typingTimer) // reset timer with each keydown
       if (this.searchField.val()) {
@@ -47,25 +48,30 @@ class Search {
   getResults(e) {
     $.when(
       // no need for callback in getJSON w/ when/then methods
+      // here we'll use that root_url variable we set in the functions.php
       $.getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val()),
       $.getJSON(universityData.root_url + "/wp-json/wp/v2/pages?search=" + this.searchField.val())
     ).then(
+      // mash together the results of the calls
       (posts, pages) => {
-        let combinedResults = posts[0].concat(pages[0])
+        let combinedResults = posts[0].concat(pages[0]) // the mashup of posts and pages in a single array
+        // render results to html
         this.resultsDiv.html(`
-      <h2 class="search-overlay__section-title">General Information</h2>
-        ${combinedResults.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
-          ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
-        ${combinedResults.length ? "</ul>" : ""}
-      `)
+          <h2 class="search-overlay__section-title">General Information</h2>
+          ${combinedResults.length ? '<ul class="link-list min-list">' : "<p>No general information matches that search.</p>"}
+            ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
+          ${combinedResults.length ? "</ul>" : ""}
+        `)
         this.isSpinnerVisible = false
       },
       () => {
+        // handle the error if getJSON doesn't work
         this.resultsDiv.html("<p>Unexpected error 👻; please try again 👍</p>")
       }
     )
   }
 
+  // open close search window with keyboard shortcuts
   keyPressDispatcher(e) {
     // console.log(e.keyCode)
     if (e.keyCode === 83 && !this.isOverlayOpen && !$("input, textarea").is(":focus")) {
@@ -75,7 +81,6 @@ class Search {
       this.closeOverlay()
     }
   }
-
   openOverlay() {
     this.searchOverlay.addClass("search-overlay--active")
     $("body").addClass("body-no-scroll")
@@ -84,14 +89,13 @@ class Search {
     // console.log("opening...")
     this.isOverlayOpen = true
   }
-
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active")
     $("body").removeClass("body-no-scroll")
     // console.log("closing...")
     this.isOverlayOpen = false
   }
-
+  // just render HTML for the search box
   addSearchHTML() {
     $("body").append(`
       <div class="search-overlay">
@@ -103,9 +107,7 @@ class Search {
           </div>
         </div>
         <div class="container">
-          <div id="search-overlay__results">
-            holla!
-          </div>
+          <div id="search-overlay__results"></div>
         </div>
       </div>
     `)

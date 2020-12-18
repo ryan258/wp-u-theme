@@ -46,8 +46,13 @@ function university_files() {
     wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.8f756196d1cb9b154478.css'));
   }
 
+  // set a dynamic root url to take the form of whatever environment it sits in
+  // then puts it in the source of the web page
+  // args($nameOfMainJS, $varName, $assocArrayOfAvailableDataInJS)
   wp_localize_script('main-university-js', 'universityData', array(
+    // set var for the url of current WP installation
     'root_url' => get_site_url()
+    // we can build all sorts of properties in here
   ));
 }
 
