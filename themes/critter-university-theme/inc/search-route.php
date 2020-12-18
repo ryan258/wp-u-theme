@@ -16,5 +16,27 @@ function universityRegisterSearch() {
 
 // create that callback function
 function universitySearchResults() {
-  return 'Congrats you have a working route!';
+  // WP will automatically convert our data from PHP to JSON
+  // so we can just focus on writing custom queries 🤗
+  $professors = new WP_Query(array(
+    'post_type' => 'professor'
+  ));
+
+  //define data that we want
+  $professorResults  = array();
+  // loop and push data to our empty array
+  while ($professors->have_posts()) {
+    // get the data ready and accessible
+    $professors->the_post();
+    // get what we want
+    // array_push(arrayToAddTo, whatToAddToThatArray);
+    array_push($professorResults, array(
+      'title' => get_the_title(),
+      'permalink' => get_the_permalink(),
+    ));
+  }
+
+  // return the data we'd otherwise be looping through
+  // return $professors->posts;
+  return $professorResults;
 }
