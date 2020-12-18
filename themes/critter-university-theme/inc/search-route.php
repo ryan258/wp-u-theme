@@ -15,11 +15,16 @@ function universityRegisterSearch() {
 }
 
 // create that callback function
-function universitySearchResults() {
+function universitySearchResults($data) {
   // WP will automatically convert our data from PHP to JSON
   // so we can just focus on writing custom queries 🤗
   $professors = new WP_Query(array(
-    'post_type' => 'professor'
+    'post_type' => 'professor',
+    // 's' stands for search, special query prop, and rock a parameter
+    // look in the data array for term, we own the naming scheme
+    // wp-json/university/v1/search?term=dr
+    // ALWAYS SANITIZE USER INPUT!
+    's' => sanitize_text_field($data['term'])
   ));
 
   //define data that we want
