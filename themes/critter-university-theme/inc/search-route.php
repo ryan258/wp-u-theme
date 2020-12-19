@@ -118,7 +118,7 @@ function universitySearchResults($data) {
   
     $programRelationshipQuery = new WP_Query(array(
       // what we're looking for
-      'post_type' => 'professor',
+      'post_type' => array('professor', 'event'),
       // search based on the value of a custom field
       // if the query doesn't match it will just leave filter post_type to get all professors, so we'll wrap all this logic in an if statement
       'meta_query' => $programsMetaQuery
@@ -126,6 +126,25 @@ function universitySearchResults($data) {
   
     while($programRelationshipQuery->have_posts()) {
       $programRelationshipQuery->the_post();
+
+      if (get_post_type() == 'event') {
+        $eventDate = new DateTime(get_field('event_date'));
+  
+        $description = null;
+        if (has_excerpt()) {
+          $description = get_the_excerpt();
+        } else {
+          $description = wp_trim_words(get_the_content(), 18);
+        }
+  
+        array_push($results['events'], array(
+          'title' => get_the_title(),
+          'permalink' => get_the_permalink(),
+          'month' => $eventDate->format('M'),
+          'day' => $eventDate->format('d'),
+          'description' => $description
+        ));
+      }
   
       if (get_post_type() == 'professor') {
         array_push($results['professors'], array(
@@ -140,6 +159,7 @@ function universitySearchResults($data) {
     // SORT_REGULAR to play nicely with associative arrays, look within each sub items of an array to determine duplicate or not
     // array_value() - removes the key
     $results['professors'] = array_values(array_unique($results['professors'], SORT_REGULAR));
+    $results['events'] = array_values(array_unique($results['events'], SORT_REGULAR));
   }
 
 
