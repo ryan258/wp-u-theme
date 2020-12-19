@@ -70,6 +70,7 @@ function universitySearchResults($data) {
       array_push($results['programs'], array(
         'title' => get_the_title(),
         'permalink' => get_the_permalink(),
+        'id' => get_the_ID(),
       ));
     }
     
@@ -100,6 +101,47 @@ function universitySearchResults($data) {
     }
 
   }
+
+  if ($results['programs']) {
+    $programsMetaQuery = array('relation' => 'OR');
+  
+    foreach ($results['programs'] as $item) {
+      // array_push(arrayToAddOnTo, whatToAdd)
+      array_push($programsMetaQuery, array(
+        // name of ACF we want to look within (field's shortname)
+        'key' => 'related_programs',
+        // look for numbers that are disguised as strings
+        'compare' => 'LIKE',
+        'value' => '"' . $item['id'] . '"'
+      ));
+    }
+  
+    $programRelationshipQuery = new WP_Query(array(
+      // what we're looking for
+      'post_type' => 'professor',
+      // search based on the value of a custom field
+      // if the query doesn't match it will just leave filter post_type to get all professors, so we'll wrap all this logic in an if statement
+      'meta_query' => $programsMetaQuery
+    ));
+  
+    while($programRelationshipQuery->have_posts()) {
+      $programRelationshipQuery->the_post();
+  
+      if (get_post_type() == 'professor') {
+        array_push($results['professors'], array(
+          'title' => get_the_title(),
+          'permalink' => get_the_permalink(),
+          // 0 = current post, size
+          'image' => get_the_post_thumbnail_url(0, 'professorLandscape'),
+        ));
+      }
+    }
+  
+    // SORT_REGULAR to play nicely with associative arrays, look within each sub items of an array to determine duplicate or not
+    // array_value() - removes the key
+    $results['professors'] = array_values(array_unique($results['professors'], SORT_REGULAR));
+  }
+
 
   // return the data we'd otherwise be looping through
   // return $professors->posts;
