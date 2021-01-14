@@ -126,3 +126,51 @@ function universityMapKey($api) {
 }
 
 add_filter('acf/fields/google_map/api', 'universityMapKey');
+
+// Redirect subscriber accounts out of admin and onto homepage
+function redirectSubsToFrontend() {
+  // get info about current user
+  $ourCurrentUser = wp_get_current_user();
+
+  if(count($ourCurrentUser->roles) == 1 AND $ourCurrentUser->roles[0] == 'subscriber') {
+    wp_redirect(site_url('/'));
+    exit;
+  }
+}
+
+add_action('admin_init', 'redirectSubsToFrontend');
+
+// Hide admin bar for subscriber accounts
+function noSubsAdminBar() {
+  // get info about current user
+  $ourCurrentUser = wp_get_current_user();
+
+  if(count($ourCurrentUser->roles) == 1 AND $ourCurrentUser->roles[0] == 'subscriber') {
+    show_admin_bar(false);
+  }
+}
+
+add_action('wp_loaded', 'noSubsAdminBar');
+
+// Customize Login Screen
+function ourHeaderUrl() {
+  return esc_url(site_url('/'));
+}
+
+add_filter('login_headerurl', 'ourHeaderUrl');
+
+// Load our CSS on login screen
+function ourLoginCSS() {
+  wp_enqueue_style('custom-google-fonts', '//fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i');
+  wp_enqueue_style('our-main-styles', get_theme_file_uri('/bundled-assets/styles.8f756196d1cb9b154478.css'));
+}
+
+add_action('login_enqueue_scripts', 'ourLoginCSS');
+
+// Update title on Login page to use site name instead of powered by wordpress
+function ourLoginTitle() {
+  // return get_option('blogname');
+  return get_bloginfo('name');
+}
+
+add_filter('login_headertext', 'ourLoginTitle');
