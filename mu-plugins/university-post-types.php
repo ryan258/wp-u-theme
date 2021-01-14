@@ -6,7 +6,9 @@
 function university_post_types() {
   // Campus Post Type
   register_post_type('campus', array(
-    'show_in_rest' => true,
+    // 'show_in_rest' => true,
+    'capability_type' => 'campus', // default is 'post'
+    'map_meta_cap' => true, // reasonably require event related permissions
     'supports' => array('title', 'editor', 'excerpt'),
     'rewrite' => array('slug' => 'campuses'),
     'has_archive' => true,
@@ -21,8 +23,11 @@ function university_post_types() {
     'menu_icon' => 'dashicons-location-alt'
   ));
     
+  // Event Post Type
   register_post_type('event', array(
-    'show_in_rest' => true,
+    // 'show_in_rest' => true,
+    'capability_type' => 'event', // default is 'post'
+    'map_meta_cap' => true, // reasonably require event related permissions
     'supports' => array('title', 'editor', 'excerpt'),
     'rewrite' => array(
       'slug' => 'events',
