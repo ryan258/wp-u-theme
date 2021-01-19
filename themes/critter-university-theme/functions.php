@@ -11,6 +11,12 @@ function university_custom_rest() {
       return get_the_author();
     }
   ));
+  
+  register_rest_field('note', 'userNoteCount', array(
+    'get_callback' => function() {
+      return count_user_posts(get_current_user_id(), 'note');
+    }
+  ));
   // you can register as many new rest fields as you want here
   // register_rest_field('', '', array());
 }
@@ -178,21 +184,29 @@ function ourLoginTitle() {
 
 add_filter('login_headertext', 'ourLoginTitle');
 
-// Force note posts to be private
-// - wp_insert_post_data is one of the most powerful and flexible filter hooks in WP
-// - think of it as a filter, $data in (modify) $data out - fyi: $data is an array
-function makeNotePrivate($data) {
+function makeNotePrivate($data, $postarr) {
+  // Sanitize note content
   if ($data['post_type'] == 'note') {
+    if (count_user_posts(get_current_user_id(), 'note') > 4 AND !$postarr['ID'] ) {
+      die("You have reached your note limit!"); // then everything else in this function doesn't exist
+    }
     $data['post_content'] = sanitize_textarea_field($data['post_content']);
     $data['post_title'] = sanitize_text_field($data['post_title']);
   }
-
+  
+  // Force note posts to be private
   if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash' ) {
     $data['post_status'] = "private";
-
+    
   }
+  
+  
   return $data;
 }
-
-add_filter('wp_insert_post_data', 'makeNotePrivate');
+// this filter hook will run for every post type (Create, Update)
+// - wp_insert_post_data is one of the most powerful and flexible filter hooks in WP
+// - think of it as a filter, $data in (modify) $data out - fyi: $data is an array
+// - $postarr contains another array with info about the post - this 2 means for it to work with 2 parameters, by default it is 1
+// 10 - priority is only a matter if you're running multiple functions on the same filter hook (lower #, earlier it will run)
+add_filter('wp_insert_post_data', 'makeNotePrivate', 10, 2);
 
