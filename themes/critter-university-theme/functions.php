@@ -1,4 +1,5 @@
 <?php
+// filters - intercept and do something before data is saved to the database
 
 require get_theme_file_path('/inc/search-route.php');
 
@@ -176,3 +177,22 @@ function ourLoginTitle() {
 }
 
 add_filter('login_headertext', 'ourLoginTitle');
+
+// Force note posts to be private
+// - wp_insert_post_data is one of the most powerful and flexible filter hooks in WP
+// - think of it as a filter, $data in (modify) $data out - fyi: $data is an array
+function makeNotePrivate($data) {
+  if ($data['post_type'] == 'note') {
+    $data['post_content'] = sanitize_textarea_field($data['post_content']);
+    $data['post_title'] = sanitize_text_field($data['post_title']);
+  }
+
+  if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash' ) {
+    $data['post_status'] = "private";
+
+  }
+  return $data;
+}
+
+add_filter('wp_insert_post_data', 'makeNotePrivate');
+

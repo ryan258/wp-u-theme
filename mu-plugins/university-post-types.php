@@ -80,6 +80,8 @@ function university_post_types() {
   
   // Note Post Type
   register_post_type('note', array(
+    'capability_type' => 'note', // creates a set of brand new permissions that only apply to this post type
+    'map_meta_cap' => true, // enforces and requires permissions at the right place and time
     'show_in_rest' => true, // make available for our custom REST route
     'supports' => array('title', 'editor'),
     'public' => false,
