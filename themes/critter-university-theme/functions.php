@@ -67,8 +67,10 @@ function university_files() {
   // args($nameOfMainJS, $varName, $assocArrayOfAvailableDataInJS)
   wp_localize_script('main-university-js', 'universityData', array(
     // set var for the url of current WP installation
-    'root_url' => get_site_url()
+    'root_url' => get_site_url(),
     // we can build all sorts of properties in here
+    // create a special number just for our user session
+    'nonce' => wp_create_nonce('wp_rest')
   ));
 }
 
