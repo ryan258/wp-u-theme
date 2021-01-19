@@ -8,10 +8,12 @@ class MyNotes {
   }
 
   events() {
-    $(".delete-note").on("click", this.deleteNote)
-    // make sure we bind there to the class and not the thing that was clicked
-    $(".edit-note").on("click", this.editNote.bind(this))
-    $(".update-note").on("click", this.updateNote.bind(this))
+    // make sure we bind these to the class and not the thing that was clicked
+    // apply event handlers to any future rendered children
+    $("#my-notes").on("click", ".delete-note", this.deleteNote)
+    $("#my-notes").on("click", ".edit-note", this.editNote.bind(this))
+    $("#my-notes").on("click", ".update-note", this.updateNote.bind(this))
+    $(".submit-note").on("click", this.createNote.bind(this))
   }
 
   // Methods will go here
@@ -62,7 +64,7 @@ class MyNotes {
   }
 
   updateNote(e) {
-    // alert("ok deleted")
+    // alert("ok updated")
     const thisNote = $(e.target).parents("li")
     const ourUpdatedPost = {
       title: thisNote.find(".note-title-field").val(),
@@ -79,6 +81,48 @@ class MyNotes {
       success: (response) => {
         this.makeNoteReadOnly(thisNote)
         console.log("congrats!")
+        console.log(response)
+      },
+      error: (response) => {
+        console.log("beep error...!")
+        console.log(response)
+      }
+    })
+  }
+
+  createNote(e) {
+    // alert("ok created")
+    const ourNewPost = {
+      title: $(".new-note-title").val(),
+      content: $(".new-note-body").val(),
+      status: "publish"
+    }
+
+    $.ajax({
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("X-WP-Nonce", universityData.nonce)
+      },
+      // create a post of the type note by POSTing to this url
+      url: universityData.root_url + "/wp-json/wp/v2/note/",
+      type: "POST",
+      data: ourNewPost,
+      success: (response) => {
+        $(".new-note-title, .new-note-body").val("")
+        // add item to /my-notes on the fly
+        $(`
+        <li data-id="${response.id}">
+            <input readonly class="note-title-field" type="text" value="${response.title.raw}">
+            <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
+            <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
+            <textarea readonly class="note-body-field" name="" id="" cols="30" rows="10">${response.content.raw}</textarea>
+            <span class="update-note btn btn--blue btn--small"><i class="fa fa-arrow-right" aria-hidden="true"></i> Save</span>
+          </li>
+        `)
+          .prependTo("#my-notes")
+          .hide()
+          .slideDown()
+
+        console.log("congrats, new post created!")
         console.log(response)
       },
       error: (response) => {
