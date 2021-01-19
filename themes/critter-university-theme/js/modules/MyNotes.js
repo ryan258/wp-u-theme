@@ -11,6 +11,7 @@ class MyNotes {
     $(".delete-note").on("click", this.deleteNote)
     // make sure we bind there to the class and not the thing that was clicked
     $(".edit-note").on("click", this.editNote.bind(this))
+    $(".update-note").on("click", this.updateNote.bind(this))
   }
 
   // Methods will go here
@@ -50,6 +51,33 @@ class MyNotes {
       type: "DELETE",
       success: (response) => {
         thisNote.slideUp()
+        console.log("congrats!")
+        console.log(response)
+      },
+      error: (response) => {
+        console.log("beep error...!")
+        console.log(response)
+      }
+    })
+  }
+
+  updateNote(e) {
+    // alert("ok deleted")
+    const thisNote = $(e.target).parents("li")
+    const ourUpdatedPost = {
+      title: thisNote.find(".note-title-field").val(),
+      content: thisNote.find(".note-body-field").val()
+    }
+
+    $.ajax({
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader("X-WP-Nonce", universityData.nonce)
+      },
+      url: universityData.root_url + "/wp-json/wp/v2/note/" + thisNote.data("id"),
+      type: "POST",
+      data: ourUpdatedPost,
+      success: (response) => {
+        this.makeNoteReadOnly(thisNote)
         console.log("congrats!")
         console.log(response)
       },
